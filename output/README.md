@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | **pass 7 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | **pass 8 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -53,11 +53,12 @@ surfaces.
 | crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
 | wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
 | tail | short blob | spline + rings | longer, higher, thicker | tail |
-| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | **one volume + cream jaw** |
-| back feathers | — | spine ladder | spine ladder | spine ladder | **dorsal tile ridge** |
-| shoulder / hip | — | — | — | — | rounded masses | **flared limb tops** |
+| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | one volume + cream jaw | **+2 mm, squared nose block** |
+| back feathers | — | spine ladder | spine ladder | spine ladder | dorsal tile ridge | **removed; wings converge** |
+| shoulder / hip | — | — | — | — | rounded masses | flared limb tops | **rounded, leaning haunches** |
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | **117 × 109 × 100** |
+| feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | **broad slab + 4 cone claws** |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | **117 × 111 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
@@ -143,21 +144,54 @@ were judged without colour.
    that same volume** (a material region, not separate geometry). The cheek pads
    were shrunk and tucked up beside the eyes.
 
+**Pass 8** addressed five specific areas:
+
+1. **Nose.** The snout tip now carries a distinct **soft-square jewel block** —
+   a beveled box (12.2 × 9.0 × 9.0 mm, 2.5 mm bevel) merged into the snout, so
+   the muzzle slopes down into it instead of the old pair of black dots on a
+   plain rounded tip. The two nostrils are tall ovals painted on the block's
+   front face.
+2. **Toe/claw rows.** The feet were three round lobes in a row plus a cream ring
+   painted around each claw — the "double chain" that read as mechanical. Each
+   foot is now **one broad, slightly boxy slab** (super-ellipse power 3.4), and
+   the claws are **four clean tapered cones** emerging from its front face.
+3. **Snout length.** The front sections moved ~1 mm forward and the nose block
+   adds ~1.5 mm more, so the muzzle is ~2.4 mm longer overall without touching
+   the skull, eyes or mane.
+4. **Hand/foot separation.** The rear limbs moved outboard (leg 13.5 → 19.0 mm,
+   foot 14.5 → 19.5 mm) and now **lean out of the flank**, matching the measured
+   reference (front feet ±10.0 mm, rear feet ±19.5 mm). The four limbs read as
+   four limbs in the black silhouette test.
+5. **Shoulders / hips.** Both limb lofts were re-profiled at super-ellipse power
+   2.2 (rounder) with a fuller shoulder swell and a leaning haunch, so no
+   straight cylinder butts against the torso.
+
+## 2b. Material borders
+
+Region borders are assigned per face, so a voxel remesh quantises every colour
+edge to the 0.45 mm face grid. For the claws this read as a clipped sawtooth, so
+`refine_material_edges()` **subdivides only the faces that straddle a material
+boundary** (then triangulates the resulting n-gons and dissolves degenerates)
+and re-assigns. That gives a clean skin/nail curve for ~75k extra faces instead
+of re-voxelling the whole model. A grazing-angle test showed the claw boundary
+is only clean when the cone meets the foot face near-perpendicularly, which is
+why the claws emerge at ~45°.
+
 ## 3. Final dimensions
 
 ```
 Width  (X)  116.85 mm
-Depth  (Y)  108.54 mm
+Depth  (Y)  110.99 mm
 Height (Z)  100.00 mm
-Base contact area  1237.2 mm^2
+Base contact area  1509.4 mm^2
 ```
 
 ## 4. Validation results
 
 ```
-Vertices                272,066
-Edges                   544,089
-Faces                   272,003
+Vertices                327,666
+Edges                   681,171
+Faces                   353,485
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -165,18 +199,19 @@ Wire edges              0
 Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
-Bounding box            (-58.42, -41.56, 0.00) -> (58.43, 66.98, 100.00) mm
-Thickness samples       6,046
-Min thickness           0.19 mm   (feather silhouette edge, grazing ray)
-5th percentile          2.71 mm
-Median thickness        10.89 mm
+Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 66.98, 100.00) mm
+Thickness samples       6,008
+Min thickness           0.27 mm   (claw tip, grazing ray)
+5th percentile          2.68 mm
+Median thickness        10.93 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was re-imported and independently re-checked: 272,066 verts /
-544,172 tris, 0 non-manifold, 0 boundary, 116.85 × 108.54 × 100.00 mm. The 3MF
-is a valid OPC package with 11 basematerials and `unit="millimeter"`.
+The exported STL was independently re-checked by parsing it directly: 655,372
+triangles, 116.85 × 110.99 × 100.00 mm. The 3MF is a valid OPC package with 11
+basematerials and `unit="millimeter"`; its full-precision coordinates give an
+edge-use histogram of {2: 983,050, 4: 4} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -186,18 +221,18 @@ is a valid OPC package with 11 basematerials and `unit="millimeter"`.
   studs cleanly.
 - **FDM**: 0.4 mm nozzle, 0.10–0.14 mm layers, supports under the wing, crest
   and tail overhangs.
-- **Thickness**: median 10.9 mm, 5th percentile 2.71 mm. The sub-millimetre
-  reading is a grazing ray at a feather silhouette edge, not a wall — the plates
-  themselves are ~3.4 mm thick.
-- **Stability**: 1237 mm² of base contact — no raft needed.
+- **Thickness**: median 10.9 mm, 5th percentile 2.68 mm. A probe restricted
+  to the claw band gives a 5th percentile of 2.3 mm, so the claws are solid; the
+  sub-millimetre whole-model minimum is a grazing ray at a silhouette edge.
+- **Stability**: 1509 mm² of base contact across all four feet — no raft needed.
 
 ## 6. Files
 
 ```
 output/
   quetzalog_mascot_print_ready.blend   full Blender project
-  quetzalog_mascot_print_ready.stl     binary STL, millimetres (27.3 MB)
-  quetzalog_mascot_print_ready.3mf     3MF with per-face colours (6.8 MB)
+  quetzalog_mascot_print_ready.stl     binary STL, millimetres (32.8 MB)
+  quetzalog_mascot_print_ready.3mf     3MF with per-face colours (8.7 MB)
   validation_report.txt                mesh audit
   hero.png                             hero render
   comparison/
@@ -217,6 +252,12 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement06/                        nose / limb / claw diagnostics
+    front.png side.png back.png front_3quarter.png back_3quarter.png
+    hands_feet_closeup.png snout_closeup.png
+    silhouette_front.png silhouette_side.png silhouette_back.png
+    clay_shoulder.png clay_hip.png clay_legs.png
+    reg_head.png reg_head_side.png reg_back_upper.png
   renders/                             orthographic + perspective PNGs
 ```
 
@@ -233,21 +274,34 @@ output/
    used qualitatively (crest sweep, tail depth, wing fold); the model's true
    orthographic side views therefore show less face than those references.
 3. **The back is barer than the reference.** `views/back.png` does show a
-   feather column down the spine; the brief for pass 7 explicitly called the
-   central rail unwanted and asked for it to be removed, so the model now has a
-   plain body back with the two wings converging toward the tail.
+   feather column down the spine; the pass-7 brief explicitly called the central
+   rail unwanted, so the model has a plain body back with the two wings
+   converging toward the tail.
 4. **The mane is a compromise.** The six-view references show the crest as a
    flat radial fan behind the head, whereas the refinement brief asked for a
    continuous swept-back mane covering the crown. The model follows the brief
    (no bald patch), so its crest is taller and more swept than `views/front.png`.
 5. **The wings are less spread** in the front view than the reference; this was
    carried over unchanged from pass 3 and is not part of this pass.
-5. **The neck is thicker than the reference.** `views/right.png` shows a
+6. **The neck is thicker than the reference.** `views/right.png` shows a
    narrower neck column; feeding the front contour straight up from the chest
    (so the neck stops reading as a separate object) necessarily makes it wider.
-6. **LEGO studs / brick seams** are represented only as small studs on the
-   feather plates and the belly panel. Modelling every 1×1 plate seam would add
-   sub-millimetre noise that would not print.
-7. **Crest colours** vary per leaf in the references with no strict pattern; a
-   repeating rainbow sequence is used.
-8. **No physical scale was given**; 100 mm overall height was assumed.
+7. **The toes are not separated.** The reference's four claws each emerge from
+   their own rounded toe block. The pass-8 brief called the row of separate
+   round toe lobes the "double chain" and asked for one broad form, so the model
+   uses a single foot slab with four claws rather than four toe blocks.
+8. **Claws meet the foot at ~45°.** A grazing-angle test showed the skin/nail
+   material border is only clean when the claw's cone meets the foot face close
+   to perpendicular. Steeper claws looked better in profile but produced a
+   clipped, sawtoothed colour edge, so the angle was traded for border quality.
+9. **Material borders are voxel-quantised.** Every region edge is assigned per
+   face on the 0.45 mm voxel grid. `refine_material_edges()` subdivides just the
+   boundary faces to soften this, but the remaining stair-step is a resolution
+   characteristic shared with the belly panel and mane colours, not specific to
+   the claws.
+10. **LEGO studs / brick seams** are represented only as small studs on the
+    feather plates and the belly panel. Modelling every 1×1 plate seam would add
+    sub-millimetre noise that would not print.
+11. **Crest colours** vary per leaf in the references with no strict pattern; a
+    repeating rainbow sequence is used.
+12. **No physical scale was given**; 100 mm overall height was assumed.
