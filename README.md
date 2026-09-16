@@ -13,10 +13,10 @@ wings, a curled feathered tail, big cartoon eyes and a cream muzzle/belly — is
 rebuilt from **measured cross-sections** taken off the reference images, not by
 extruding or displacing those images.
 
-- **Dimensions:** 113.63 × 102.79 × 100.00 mm (W × D × H)
-- **Topology:** 283,185 verts · 283,212 faces · 1 connected component
+- **Dimensions:** 113.63 × 106.17 × 100.00 mm (W × D × H)
+- **Topology:** 284,388 verts · 284,423 faces · 1 connected component
 - **Validation:** 0 non-manifold · 0 boundary · 0 loose · 0 degenerate faces
-- **Print:** flat stable base (1229 mm²), median thickness 11.4 mm, min 2.7 mm (5th pct)
+- **Print:** flat stable base (1213 mm²), median thickness 11.5 mm, min 2.7 mm (5th pct)
 
 Full model report, methodology and known deviations: [`output/README.md`](output/README.md)
 
@@ -45,10 +45,11 @@ scripts/
   analyze_regions.py      colour segmentation + row profiling of the references
   grid_refs.py            coordinate-grid overlays for manual measurement
   profile_compare.py      per-row silhouette delta (reference vs model)
-  build_v6.py             final procedural build (v2..v5 kept for the iteration history)
+  build_v7.py             final procedural build (v2..v6 kept for the iteration history)
   render_target_match.py  renders the model from image2's camera angle
   render_side.py          orthographic side/front diagnostics
   render_head.py          head close-ups for the face/mane pass
+  render_refine03.py      full-body renders for the structural pass
   render_compare.py       reference-matched orthographic renders + overlays
   make_comparison.py      builds the six comparison sheets
   render_persp.py         perspective coherence renders
@@ -68,7 +69,7 @@ output/
 Requires Blender (tested on 5.2 LTS). Run inside Blender in order:
 
 ```python
-exec(compile(open("scripts/build_v6.py").read(),     "build_v6.py", "exec"))
+exec(compile(open("scripts/build_v7.py").read(),     "build_v7.py", "exec"))
 exec(compile(open("scripts/render_compare.py").read(),"render_compare.py", "exec"))
 exec(compile(open("scripts/render_persp.py").read(),  "render_persp.py", "exec"))
 exec(compile(open("scripts/finalize_export.py").read(),"finalize_export.py", "exec"))

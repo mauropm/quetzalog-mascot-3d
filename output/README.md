@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | **pass 4 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | **pass 5 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -53,7 +53,10 @@ surfaces.
 | crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
 | wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
 | tail | short blob | spline + rings | longer, higher, thicker | tail |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | **114 × 103 × 100** |
+| snout | short | short | short | short | **+3.4 mm forward** |
+| back feathers | — | spine ladder | spine ladder | spine ladder | **dorsal tile ridge** |
+| shoulder / hip | — | — | — | — | **rounded blending masses** |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | **114 × 106 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
@@ -78,21 +81,41 @@ wings folded back along the body, a long tail and a swept crest.
    a **curvature** parameter so the feathers sweep rather than spike. The bare
    forehead band is now ~4 mm.
 
+**Pass 5** was a structural refinement pass on three specific problems:
+
+1. **Snout too short.** The snout cross-sections were pushed forward
+   (`cy −28.0 → −31.5` at the widest section), so the tip now sits at
+   `Y = −39.2` instead of `−35.9` — **3.4 mm more forward projection** with the
+   same width, height and rounded profile. The nostrils moved with it.
+2. **Tail↔back feather bridge.** The dorsal feathers were a sparse diagonal
+   ladder pointing up-and-back, which read as a loop climbing from the tail
+   into the upper back and left the back bare between the wings. They are now a
+   **roof-tile dorsal ridge**: roots measured on the actual back surface, flowing
+   *down-and-back* from the nape to the tail base, wide central tiles with
+   staggered flanking tiles so the whole back is covered wing to wing. The
+   reference (`views/back.png`) shows one continuous feather column from the
+   head to the tail, so continuity was kept — as a deliberate mane, not a loop.
+3. **Tubular limbs.** The front legs and rear haunches butted into the torso as
+   near-constant cylinders. Each now ends in a **rounded shoulder / hip mass**
+   (`add_ellipsoid`) that overlaps the torso and carries the leg's top section,
+   and the leg lofts are tapered rather than constant-width. No cylinder-to-body
+   intersection remains.
+
 ## 3. Final dimensions
 
 ```
 Width  (X)  113.63 mm
-Depth  (Y)  102.79 mm
+Depth  (Y)  106.17 mm
 Height (Z)  100.00 mm
-Base contact area  1228.6 mm^2
+Base contact area  1213.2 mm^2
 ```
 
 ## 4. Validation results
 
 ```
-Vertices                283,185
-Edges                   566,423
-Faces                   283,212
+Vertices                284,388
+Edges                   568,831
+Faces                   284,423
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -100,17 +123,17 @@ Wire edges              0
 Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
-Bounding box            (-56.81, -35.81, 0.00) -> (56.81, 66.98, 100.00) mm
-Thickness samples       6,025
-Min thickness           0.15 mm   (feather silhouette edge, grazing ray)
-5th percentile          2.70 mm
-Median thickness        11.38 mm
+Bounding box            (-56.81, -39.19, 0.00) -> (56.81, 66.98, 100.00) mm
+Thickness samples       6,052
+Min thickness           0.36 mm   (feather silhouette edge, grazing ray)
+5th percentile          2.67 mm
+Median thickness        11.48 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was re-imported and independently re-checked: 283,185 verts /
-566,422 tris, 0 non-manifold, 0 boundary, 113.63 × 102.79 × 100.00 mm. The 3MF
+The exported STL was re-imported and independently re-checked: 284,388 verts /
+568,816 tris, 0 non-manifold, 0 boundary, 113.63 × 106.17 × 100.00 mm. The 3MF
 is a valid OPC package with 11 basematerials and `unit="millimeter"`.
 
 ## 5. Print recommendations
@@ -121,10 +144,10 @@ is a valid OPC package with 11 basematerials and `unit="millimeter"`.
   studs cleanly.
 - **FDM**: 0.4 mm nozzle, 0.10–0.14 mm layers, supports under the wing, crest
   and tail overhangs.
-- **Thickness**: median 11.4 mm, 5th percentile 2.70 mm. The sub-millimetre
+- **Thickness**: median 11.5 mm, 5th percentile 2.67 mm. The sub-millimetre
   reading is a grazing ray at a feather silhouette edge, not a wall — the plates
   themselves are ~3.4 mm thick.
-- **Stability**: 1229 mm² of base contact — no raft needed.
+- **Stability**: 1213 mm² of base contact — no raft needed.
 
 ## 6. Files
 
@@ -142,8 +165,10 @@ output/
     perspective_test.png                 four perspective coherence renders
     clay_*.png                           neutral gray-clay renders (geometry only)
     head_front.png head_clay.png         head close-ups
-  refinement/                          head close-ups for the face/mane pass
+  refinement/                          head close-ups (face/mane pass)
     head_front.png head_3quarter.png head_side.png head_top.png head_back34.png
+  refinement03/                        body renders (structural pass)
+    front.png side.png back.png top.png 3quarter.png
   renders/                             orthographic + perspective PNGs
 ```
 
@@ -159,15 +184,18 @@ output/
    orthographic side views. `image2.png` is the same kind of view. They were
    used qualitatively (crest sweep, tail depth, wing fold); the model's true
    orthographic side views therefore show less face than those references.
-3. **The mane is a compromise.** The six-view references show the crest as a
+3. **The dorsal ridge is denser than the reference.** `views/back.png` shows a
+   narrower feather column with more bare teal flanking it; the ridge here covers
+   the full back to avoid the empty cavity the brief called out.
+4. **The mane is a compromise.** The six-view references show the crest as a
    flat radial fan behind the head, whereas the refinement brief asked for a
    continuous swept-back mane covering the crown. The model follows the brief
    (no bald patch), so its crest is taller and more swept than `views/front.png`.
-4. **The wings are less spread** in the front view than the reference; this was
+5. **The wings are less spread** in the front view than the reference; this was
    carried over unchanged from pass 3 and is not part of this pass.
-5. **LEGO studs / brick seams** are represented only as small studs on the
+6. **LEGO studs / brick seams** are represented only as small studs on the
    feather plates and the belly panel. Modelling every 1×1 plate seam would add
    sub-millimetre noise that would not print.
-6. **Crest colours** vary per leaf in the references with no strict pattern; a
+7. **Crest colours** vary per leaf in the references with no strict pattern; a
    repeating rainbow sequence is used.
-7. **No physical scale was given**; 100 mm overall height was assumed.
+8. **No physical scale was given**; 100 mm overall height was assumed.
