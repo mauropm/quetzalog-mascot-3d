@@ -104,7 +104,7 @@ for i, f in enumerate(tb.faces):
     c = f.calc_center_median()
     n = f.normal
     loc, _, _, dist = bvh.ray_cast(c - n * 0.05, -n, 300.0)
-    if loc is not None and 0.01 < dist < 300.0:
+    if loc is not None and 0.15 < dist < 300.0:  # ignore edge-grazing artefacts
         thick.append(dist)
 tb.free()
 thick.sort()
