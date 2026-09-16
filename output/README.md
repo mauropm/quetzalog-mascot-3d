@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | **pass 9 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | **pass 10 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -59,7 +59,7 @@ surfaces.
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
 | feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
 | tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
-| neck front colour | teal | teal | teal | teal | teal | teal | teal | **cream, continuous to chest** |
+| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | **cream, continuous snout-to-chest** |
 | dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
@@ -183,10 +183,11 @@ The root is now at `(0, 11, 24)`, about 6.5 mm inside the torso, so the cap is
 buried and can never show.  The tube crosses the back surface in a clean curve
 and the tail grows out of the body.
 
-A rounded "rump" mass was tried in the saddle as well, but a top-view A/B showed
-it produced a visible dome in front of the root, so it was **removed** — the
-buried root alone gives the smooth blend.  The A/B is in
-`output/refinement07/` (`diag_top` vs `d4_top`).
+A rounded "rump" mass was tried in the saddle as well, but a top-view A/B on a
+stripped build (body + tail core only, no feathers, so the junction is actually
+visible) showed it produced a visible dome in front of the root, so it was
+**removed** — the buried root alone gives the smooth blend.  The stripped A/B
+builds were scratch files and are not kept in the repo.
 
 ### 9b. The continuous underside
 
@@ -201,6 +202,48 @@ puts the band at the reference's width (~12 mm of the neck's 16 mm) with green
 still on the sides and back.  The lower snout, front of the neck and chest are
 now one continuous cream surface, and it is a **material region on the existing
 surface** — no geometry was added or overlaid.
+
+**Pass 10** made the cream underside genuinely continuous.  A centreline probe
+showed the material by height:
+
+```
+z 51-70  Body_Teal   (muzzle / nose block)
+z 45-50  Cream       (jaw)
+z 42-44  Body_Teal   <-- break 1
+z 37-41  Cream       (neck front)
+z 31-36  Body_Teal   <-- break 2
+z <= 30  Cream       (chest)
+```
+
+There were two separate causes, and neither was "the wrong material is assigned
+to the neck".
+
+**Break 1 (z 42-44).** The `throat` ellipsoid that fills the notch under the
+jaw overhang is the *frontmost* surface in that band, and it had **no material
+region at all**, so it fell through to body teal.  It now has its own cream
+region.  The jaw region was also widened slightly so it overlaps the new throat
+region instead of leaving a hairline gap between them.
+
+**Break 2 (z 31-36).** The belly ellipsoid's y-radius was 7.6, which put the
+front faces of that band *just* outside it (1.038 > 1.0 at the worst point).
+Its y-radius is now 10.0, which also reaches the front faces of the inner
+thighs — previously the legs occluded the belly panel's outer edges, so the
+visible cream was ~25% narrower than the reference at the same height.
+
+The neck capsule was then re-tuned: it spans the whole front of the neck
+(z 34-56 instead of 44-58) at radius 5.4, which gives the reference's width
+profile — narrow at the throat, widening down into the chest and out at the jaw.
+
+Measured result, cream half-width by height:
+
+```
+z 12-28  5.2 -> 6.9   chest, widening downward
+z 30-42  4.9 -> 5.3   neck (narrow)
+z 44-50  6.3 -> 7.5   throat / jaw
+```
+
+and the front centreline is **Cream at every height from z 28 to z 50** — no
+teal band anywhere on it.
 
 ## 2b. Material borders
 
@@ -225,9 +268,9 @@ Base contact area  1458.9 mm^2
 ## 4. Validation results
 
 ```
-Vertices                325,466
-Edges                   676,855
-Faces                   351,373
+Vertices                325,510
+Edges                   677,005
+Faces                   351,479
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -237,17 +280,17 @@ Degenerate faces        0
 Invalid / inverted normals  0
 Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
 Thickness samples       6,024
-Min thickness           0.29 mm   (claw tip, grazing ray)
-5th percentile          2.69 mm
-Median thickness        10.96 mm
+Min thickness           0.34 mm   (claw tip, grazing ray)
+5th percentile          2.72 mm
+Median thickness        10.93 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 650,964
+The exported STL was independently re-checked by parsing it directly: 651,052
 triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 976,438, 4: 4} — i.e. manifold.
+edge-use histogram of {2: 976,568, 4: 5} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -288,6 +331,10 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement08/                        underside-continuity pass
+    front.png rear.png left_side.png right_side.png top.png
+    front_3quarter.png rear_3quarter.png left_3quarter.png right_3quarter.png
+    head_neck_chest.png head_neck_chest_front.png
   refinement07/                        tail-root + underside diagnostics
     front.png back.png left.png right.png top.png bottom.png
     front_3quarter.png back_3quarter.png rear_low.png
