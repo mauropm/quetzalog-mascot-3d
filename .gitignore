@@ -1,0 +1,9 @@
+.DS_Store
+*.blend1
+*.blend2
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.idea/
+.vscode/
