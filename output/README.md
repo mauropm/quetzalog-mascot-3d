@@ -26,8 +26,9 @@ silhouette per row so every change is driven by numbers.
 | torso / head / snout / neck / limbs | super-elliptical cross-section **lofts** from measured section stacks |
 | tail | Catmull-Rom spline core + tapering tube with radial feather rings |
 | wing arms | tapering tubes between measured joint positions |
-| crest / wings / tail / spine feathers | reusable flat "leaf" blade with a LEGO stud |
-| eyes | layered sclera → iris → pupil → highlight spheres |
+| crest / wings / tail / spine feathers | reusable flat "leaf" blade (curvable) with a LEGO stud |
+| head mane | layered feather rows rooted on the skull surface |
+| eyes | one smooth eyeball + painted material regions |
 | claws / nostrils | tapered ellipsoids |
 | red forehead crest | beveled brick |
 
@@ -43,38 +44,55 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | **pass 3 (current)** |
-|---|---|---|---|
-| posture | upright "teddy" sit | upright sit, refined | **sphinx-sit, chest raised** |
-| neck | none (head on body) | none | **distinct lofted neck** |
-| head | oversized, low | measured | **smaller, raised, longer snout** |
-| crest | chaotic ball | radial petal halo | **large swept-back layered fan** |
-| wings | spiky fans | sideways fans | **big back-swept folded wings** |
-| tail | short blob | spline + rings | **longer, higher, thicker** |
-| body | stacked primitives | lofts | **lower torso (chest top ≈ z41)** |
-| legs | stubby | stubby | **vertical front columns + rear haunches** |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | **116 × 108 × 100** |
+| | pass 1 | pass 2 | pass 3 | **pass 4 (current)** |
+|---|---|---|---|---|
+| posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
+| neck | none (head on body) | none | distinct lofted neck | neck |
+| head | oversized, low | measured | smaller, raised, longer snout | **sockets, brow, temples** |
+| eyes | sphere + sphere iris + sphere pupil + sphere highlight | same | same | **1 smooth eyeball, iris/pupil/highlight painted** |
+| crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
+| wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
+| tail | short blob | spline + rings | longer, higher, thicker | tail |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | **114 × 103 × 100** |
 
-Pass 3 was driven by `image1.png` (previous model) vs `image2.png` (target
+**Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
-wings folded back along the body, a long tail and a swept crest — none of which
-the earlier passes had.
+wings folded back along the body, a long tail and a swept crest.
+
+**Pass 4** was a face + mane refinement pass. Three defects were fixed:
+
+1. **Eyes popped out.** The eyeballs were spheres sitting proud of the skull
+   with no facial volume around them. The head now carries a **brow ridge, a
+   temple/cheek mass and eye sockets**, and the eyeballs are pulled in so they
+   protrude only ~2 mm and never break the head silhouette.
+2. **Protruding white highlight.** The highlight (and the iris and pupil) were
+   separate *geometry* — a small sphere stuck on the eyeball. All three are now
+   **material regions painted onto one smooth eyeball**, so nothing protrudes and
+   the highlight cannot catch a physical specular bump. Region predicates are
+   sized from the reference (iris ≈ 68 % of the eye, pupil ≈ 36 %).
+3. **Bald crown.** The head was a bare dome with a feather ring behind it. The
+   crest is replaced by a **continuous mane**: six layered rows of feathers
+   rooted *inside* the skull surface, starting immediately above the brow and
+   running over the crown and down the nape. Row flow rotates from up-and-back
+   at the forehead to back-and-down at the nape, and the blade primitive gained
+   a **curvature** parameter so the feathers sweep rather than spike. The bare
+   forehead band is now ~4 mm.
 
 ## 3. Final dimensions
 
 ```
-Width  (X)  116.16 mm
-Depth  (Y)  107.91 mm
+Width  (X)  113.63 mm
+Depth  (Y)  102.79 mm
 Height (Z)  100.00 mm
-Base contact area  1283.2 mm^2
+Base contact area  1228.6 mm^2
 ```
 
 ## 4. Validation results
 
 ```
-Vertices                272,997
-Edges                   545,996
-Faces                   272,973
+Vertices                283,185
+Edges                   566,423
+Faces                   283,212
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -82,17 +100,17 @@ Wire edges              0
 Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
-Bounding box            (-58.08, -39.44, 0.00) -> (58.08, 68.47, 100.00) mm
-Thickness samples       5,999
-Min thickness           0.42 mm   (feather silhouette edge)
-5th percentile          2.80 mm
-Median thickness        12.08 mm
+Bounding box            (-56.81, -35.81, 0.00) -> (56.81, 66.98, 100.00) mm
+Thickness samples       6,025
+Min thickness           0.15 mm   (feather silhouette edge, grazing ray)
+5th percentile          2.70 mm
+Median thickness        11.38 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was re-imported and independently re-checked: 272,997 verts /
-546,046 tris, 0 non-manifold, 0 boundary, 116.16 × 107.91 × 100.00 mm. The 3MF
+The exported STL was re-imported and independently re-checked: 283,185 verts /
+566,422 tris, 0 non-manifold, 0 boundary, 113.63 × 102.79 × 100.00 mm. The 3MF
 is a valid OPC package with 11 basematerials and `unit="millimeter"`.
 
 ## 5. Print recommendations
@@ -103,10 +121,10 @@ is a valid OPC package with 11 basematerials and `unit="millimeter"`.
   studs cleanly.
 - **FDM**: 0.4 mm nozzle, 0.10–0.14 mm layers, supports under the wing, crest
   and tail overhangs.
-- **Thickness**: median 12.1 mm, 5th percentile 2.80 mm. The single 0.42 mm
+- **Thickness**: median 11.4 mm, 5th percentile 2.70 mm. The sub-millimetre
   reading is a grazing ray at a feather silhouette edge, not a wall — the plates
-  themselves are ~3.5 mm thick.
-- **Stability**: 1283 mm² of base contact — no raft needed.
+  themselves are ~3.4 mm thick.
+- **Stability**: 1229 mm² of base contact — no raft needed.
 
 ## 6. Files
 
@@ -124,6 +142,8 @@ output/
     perspective_test.png                 four perspective coherence renders
     clay_*.png                           neutral gray-clay renders (geometry only)
     head_front.png head_clay.png         head close-ups
+  refinement/                          head close-ups for the face/mane pass
+    head_front.png head_3quarter.png head_side.png head_top.png head_back34.png
   renders/                             orthographic + perspective PNGs
 ```
 
@@ -139,13 +159,15 @@ output/
    orthographic side views. `image2.png` is the same kind of view. They were
    used qualitatively (crest sweep, tail depth, wing fold); the model's true
    orthographic side views therefore show less face than those references.
-3. **The head still reads slightly larger and lower** than in `image2`, and the
-   crest is less dense. The overall posture, neck, wing fold, tail and cream
-   chest panel now match the target, but the head/crest would benefit from
-   another pass.
-4. **LEGO studs / brick seams** are represented only as small studs on the
+3. **The mane is a compromise.** The six-view references show the crest as a
+   flat radial fan behind the head, whereas the refinement brief asked for a
+   continuous swept-back mane covering the crown. The model follows the brief
+   (no bald patch), so its crest is taller and more swept than `views/front.png`.
+4. **The wings are less spread** in the front view than the reference; this was
+   carried over unchanged from pass 3 and is not part of this pass.
+5. **LEGO studs / brick seams** are represented only as small studs on the
    feather plates and the belly panel. Modelling every 1×1 plate seam would add
    sub-millimetre noise that would not print.
-5. **Crest colours** vary per leaf in the references with no strict pattern; a
+6. **Crest colours** vary per leaf in the references with no strict pattern; a
    repeating rainbow sequence is used.
-6. **No physical scale was given**; 100 mm overall height was assumed.
+7. **No physical scale was given**; 100 mm overall height was assumed.
