@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | **pass 8 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | **pass 9 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -53,12 +53,14 @@ surfaces.
 | crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
 | wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
 | tail | short blob | spline + rings | longer, higher, thicker | tail |
-| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | one volume + cream jaw | **+2 mm, squared nose block** |
-| back feathers | — | spine ladder | spine ladder | spine ladder | dorsal tile ridge | **removed; wings converge** |
-| shoulder / hip | — | — | — | — | rounded masses | flared limb tops | **rounded, leaning haunches** |
+| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | one volume + cream jaw | +2 mm, squared nose block | **nose block, longer** |
+| back feathers | — | spine ladder | spine ladder | spine ladder | dorsal tile ridge | removed; wings converge | **V into tail** |
+| shoulder / hip | — | — | — | — | rounded masses | flared limb tops | rounded, leaning haunches | **unchanged** |
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
-| feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | **broad slab + 4 cone claws** |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | **117 × 111 × 100** |
+| feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
+| tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
+| neck front colour | teal | teal | teal | teal | teal | teal | teal | **cream, continuous to chest** |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
@@ -166,6 +168,40 @@ were judged without colour.
    2.2 (rounder) with a fuller shoulder swell and a leaning haunch, so no
    straight cylinder butts against the torso.
 
+**Pass 9** fixed two continuity problems.
+
+### 9a. The tail root
+
+The torso's rear surface leans forward (its back edge runs from y18.9 at z17 to
+y3.6 at z43.5), but the tail's core left it **horizontally**.  A tube leaving a
+leaning surface at 55 deg to the normal does not blend — and worse, the core's
+flat end cap at `(0, 18, 24)` sat only 0.5 mm outside the surface, so part of
+that disc was **exposed**: a flat shelf under the tail's root, which is what read
+as a "recessed gap".
+
+The root is now at `(0, 11, 24)`, about 6.5 mm inside the torso, so the cap is
+buried and can never show.  The tube crosses the back surface in a clean curve
+and the tail grows out of the body.
+
+A rounded "rump" mass was tried in the saddle as well, but a top-view A/B showed
+it produced a visible dome in front of the root, so it was **removed** — the
+buried root alone gives the smooth blend.  The A/B is in
+`output/refinement07/` (`diag_top` vs `d4_top`).
+
+### 9b. The continuous underside
+
+The cream regions were the jaw ellipsoid (`z 46.9-60.1`) and the belly ellipsoid
+(`z 7.5-44.5`), which left `z 44.5-46.9` — a 2.4 mm band across the front of the
+neck — as body teal.  That is the "yellow / green / yellow" break.
+
+A third region now bridges them: `t_capsule((0,-19.0,44),(0,-18.5,58), 5.9)`.
+A **capsule** rather than an ellipsoid, so its border is a clean vertical line
+down each side of the neck instead of a wobbling ellipsoid edge.  Radius 5.9 mm
+puts the band at the reference's width (~12 mm of the neck's 16 mm) with green
+still on the sides and back.  The lower snout, front of the neck and chest are
+now one continuous cream surface, and it is a **material region on the existing
+surface** — no geometry was added or overlaid.
+
 ## 2b. Material borders
 
 Region borders are assigned per face, so a voxel remesh quantises every colour
@@ -181,17 +217,17 @@ why the claws emerge at ~45°.
 
 ```
 Width  (X)  116.85 mm
-Depth  (Y)  110.99 mm
+Depth  (Y)  111.88 mm
 Height (Z)  100.00 mm
-Base contact area  1509.4 mm^2
+Base contact area  1458.9 mm^2
 ```
 
 ## 4. Validation results
 
 ```
-Vertices                327,666
-Edges                   681,171
-Faces                   353,485
+Vertices                325,466
+Edges                   676,855
+Faces                   351,373
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -199,19 +235,19 @@ Wire edges              0
 Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
-Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 66.98, 100.00) mm
-Thickness samples       6,008
-Min thickness           0.27 mm   (claw tip, grazing ray)
-5th percentile          2.68 mm
-Median thickness        10.93 mm
+Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
+Thickness samples       6,024
+Min thickness           0.29 mm   (claw tip, grazing ray)
+5th percentile          2.69 mm
+Median thickness        10.96 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 655,372
-triangles, 116.85 × 110.99 × 100.00 mm. The 3MF is a valid OPC package with 11
+The exported STL was independently re-checked by parsing it directly: 650,964
+triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 983,050, 4: 4} — i.e. manifold.
+edge-use histogram of {2: 976,438, 4: 4} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -224,7 +260,7 @@ edge-use histogram of {2: 983,050, 4: 4} — i.e. manifold.
 - **Thickness**: median 10.9 mm, 5th percentile 2.68 mm. A probe restricted
   to the claw band gives a 5th percentile of 2.3 mm, so the claws are solid; the
   sub-millimetre whole-model minimum is a grazing ray at a silhouette edge.
-- **Stability**: 1509 mm² of base contact across all four feet — no raft needed.
+- **Stability**: 1459 mm² of base contact across all four feet — no raft needed.
 
 ## 6. Files
 
@@ -252,6 +288,12 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement07/                        tail-root + underside diagnostics
+    front.png back.png left.png right.png top.png bottom.png
+    front_3quarter.png back_3quarter.png rear_low.png
+    neck_front.png neck_L.png neck_R.png
+    tail_join.png clay_j_*.png clay_rear.png clay_side.png clay_top.png
+    reg_head.png reg_backV.png reg_tail.png
   refinement06/                        nose / limb / claw diagnostics
     front.png side.png back.png front_3quarter.png back_3quarter.png
     hands_feet_closeup.png snout_closeup.png
@@ -299,9 +341,20 @@ output/
    boundary faces to soften this, but the remaining stair-step is a resolution
    characteristic shared with the belly panel and mane colours, not specific to
    the claws.
-10. **LEGO studs / brick seams** are represented only as small studs on the
+10. **The underside cream does not wrap as far under as the reference.** The
+    bottom view of the reference shows the tan running the whole length of the
+    belly; the model's cream regions are tuned to the front/side views, so from
+    directly underneath the belly is mostly body teal with a cream strip. This
+    is unchanged from earlier passes and is not part of this pass's brief.
+11. **The tail root is hidden inside the torso** rather than blended with a
+    visible fillet. The reference reads as a segmented chain whose first link
+    *is* the rump; a smooth tube cannot do that, so the root is buried 6.5 mm
+    inside the body and the tube crosses the back surface directly. The result
+    is smooth from every tested angle, but it is a "hidden root", not a
+    modelled transition.
+12. **LEGO studs / brick seams** are represented only as small studs on the
     feather plates and the belly panel. Modelling every 1×1 plate seam would add
     sub-millimetre noise that would not print.
-11. **Crest colours** vary per leaf in the references with no strict pattern; a
+13. **Crest colours** vary per leaf in the references with no strict pattern; a
     repeating rainbow sequence is used.
-12. **No physical scale was given**; 100 mm overall height was assumed.
+14. **No physical scale was given**; 100 mm overall height was assumed.

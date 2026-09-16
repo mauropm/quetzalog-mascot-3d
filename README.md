@@ -13,10 +13,10 @@ wings, a curled feathered tail, big cartoon eyes and a cream muzzle/belly — is
 rebuilt from **measured cross-sections** taken off the reference images, not by
 extruding or displacing those images.
 
-- **Dimensions:** 116.85 × 110.99 × 100.00 mm (W × D × H)
-- **Topology:** 327,666 verts · 353,485 faces · 1 connected component
+- **Dimensions:** 116.85 × 111.88 × 100.00 mm (W × D × H)
+- **Topology:** 325,466 verts · 351,373 faces · 1 connected component
 - **Validation:** 0 non-manifold · 0 boundary · 0 loose · 0 degenerate faces
-- **Print:** flat stable base (1509 mm²), median thickness 10.9 mm, min 2.7 mm (5th pct)
+- **Print:** flat stable base (1459 mm²), median thickness 11.0 mm, min 2.7 mm (5th pct)
 
 Full model report, methodology and known deviations: [`output/README.md`](output/README.md)
 
@@ -45,7 +45,7 @@ scripts/
   analyze_regions.py      colour segmentation + row profiling of the references
   grid_refs.py            coordinate-grid overlays for manual measurement
   profile_compare.py      per-row silhouette delta (reference vs model)
-  build_v10.py            final procedural build (v2..v9 kept for the iteration history)
+  build_v11.py            final procedural build (v2..v10 kept for the iteration history)
   render_target_match.py  renders the model from image2's camera angle
   render_side.py          orthographic side/front diagnostics
   render_head.py          head close-ups for the face/mane pass
@@ -53,6 +53,7 @@ scripts/
   render_refine04.py      clay + close-up renders for the soft-anatomy pass
   render_refine05.py      back + snout diagnostics
   render_refine06.py      nose / limb / claw diagnostics + silhouette test
+  render_refine07.py      tail-root + underside diagnostics (front/back/left/right/top)
   render_compare.py       reference-matched orthographic renders + overlays
   make_comparison.py      builds the six comparison sheets
   render_persp.py         perspective coherence renders
@@ -72,7 +73,7 @@ output/
 Requires Blender (tested on 5.2 LTS). Run inside Blender in order:
 
 ```python
-exec(compile(open("scripts/build_v10.py").read(),    "build_v10.py", "exec"))
+exec(compile(open("scripts/build_v11.py").read(),    "build_v11.py", "exec"))
 exec(compile(open("scripts/render_compare.py").read(),"render_compare.py", "exec"))
 exec(compile(open("scripts/render_persp.py").read(),  "render_persp.py", "exec"))
 exec(compile(open("scripts/finalize_export.py").read(),"finalize_export.py", "exec"))
