@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | **pass 5 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | **pass 6 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -53,10 +53,11 @@ surfaces.
 | crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
 | wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
 | tail | short blob | spline + rings | longer, higher, thicker | tail |
-| snout | short | short | short | short | **+3.4 mm forward** |
+| snout | short | short | short | short | +3.4 mm forward | **+2 mm, wider** |
 | back feathers | — | spine ladder | spine ladder | spine ladder | **dorsal tile ridge** |
-| shoulder / hip | — | — | — | — | **rounded blending masses** |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | **114 × 106 × 100** |
+| shoulder / hip | — | — | — | — | rounded masses | **flared limb tops** |
+| neck | tube | tube | tube | tube | tube | **chest-fed loft** |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | **114 × 108 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
@@ -101,21 +102,45 @@ wings folded back along the body, a long tail and a swept crest.
    and the leg lofts are tapered rather than constant-width. No cylinder-to-body
    intersection remains.
 
+**Pass 6** was a soft-cartoon-anatomy pass. Everything was verified against
+**neutral gray clay renders** (`output/refinement04/clay_*.png`) so the shapes
+were judged without colour.
+
+1. **Snout larger and longer.** The sections moved forward again
+   (`cy −31.5 → −33.5`) and grew slightly (`hx 7.3 → 7.6`, `hy 7.8 → 8.2`), so
+   the tip is now at `Y = −41.2` (from `−39.2`) and the snout reads chunkier.
+   The nostrils moved with it.
+2. **Neck rebuilt as a chest-fed loft.** The neck used to be a *tube* starting
+   inside the torso: its front sat at `y ≈ −5.6` while the cream chest plate was
+   at `y ≈ −19`, so the neck was recessed 13 mm behind the chest and read as a
+   separate object sitting on the body. It is now an 8-section loft whose
+   **front contour is carried straight up from the chest plate** (−18.5 → −20.0
+   → −19.2) and only steps back under the jaw. A small throat mass fills the
+   notch between the jaw overhang and the neck. The top of the neck stays
+   narrower than the head, so the **intentional sharp jaw edge is preserved**.
+3. **Shoulders and hips are now flared limb tops, not bolted-on spheres.** The
+   pass-5 ellipsoids were removed. Each leg's loft now widens continuously into
+   the torso (`hx 6.6 → 9.4` front, `8.0 → 9.8` rear) and then **shrinks back
+   inside the body** (`→ 4.2`), so the cap is buried and there is no exposed
+   flat edge. The limbs were also pulled back (front `y −12 → −11`, rear
+   `y 15 → 12.5`) so their fronts sit flush with the chest instead of hanging
+   out in front of it.
+
 ## 3. Final dimensions
 
 ```
 Width  (X)  113.63 mm
-Depth  (Y)  106.17 mm
+Depth  (Y)  108.14 mm
 Height (Z)  100.00 mm
-Base contact area  1213.2 mm^2
+Base contact area  1237.2 mm^2
 ```
 
 ## 4. Validation results
 
 ```
-Vertices                284,388
-Edges                   568,831
-Faces                   284,423
+Vertices                280,744
+Edges                   561,540
+Faces                   280,776
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -123,17 +148,17 @@ Wire edges              0
 Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
-Bounding box            (-56.81, -39.19, 0.00) -> (56.81, 66.98, 100.00) mm
-Thickness samples       6,052
+Bounding box            (-56.81, -41.16, 0.00) -> (56.81, 66.98, 100.00) mm
+Thickness samples       6,038
 Min thickness           0.36 mm   (feather silhouette edge, grazing ray)
-5th percentile          2.67 mm
-Median thickness        11.48 mm
+5th percentile          2.72 mm
+Median thickness        11.47 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was re-imported and independently re-checked: 284,388 verts /
-568,816 tris, 0 non-manifold, 0 boundary, 113.63 × 106.17 × 100.00 mm. The 3MF
+The exported STL was re-imported and independently re-checked: 280,744 verts /
+561,528 tris, 0 non-manifold, 0 boundary, 113.63 × 108.14 × 100.00 mm. The 3MF
 is a valid OPC package with 11 basematerials and `unit="millimeter"`.
 
 ## 5. Print recommendations
@@ -147,7 +172,7 @@ is a valid OPC package with 11 basematerials and `unit="millimeter"`.
 - **Thickness**: median 11.5 mm, 5th percentile 2.67 mm. The sub-millimetre
   reading is a grazing ray at a feather silhouette edge, not a wall — the plates
   themselves are ~3.4 mm thick.
-- **Stability**: 1213 mm² of base contact — no raft needed.
+- **Stability**: 1237 mm² of base contact — no raft needed.
 
 ## 6. Files
 
@@ -169,6 +194,9 @@ output/
     head_front.png head_3quarter.png head_side.png head_top.png head_back34.png
   refinement03/                        body renders (structural pass)
     front.png side.png back.png top.png 3quarter.png
+  refinement04/                        clay + close-ups (soft-anatomy pass)
+    head_side.png head_3quarter.png neck_front.png
+    body_front.png body_3quarter.png body_side.png  clay_*.png
   renders/                             orthographic + perspective PNGs
 ```
 
@@ -193,9 +221,12 @@ output/
    (no bald patch), so its crest is taller and more swept than `views/front.png`.
 5. **The wings are less spread** in the front view than the reference; this was
    carried over unchanged from pass 3 and is not part of this pass.
-6. **LEGO studs / brick seams** are represented only as small studs on the
+6. **The neck is thicker than the reference.** `views/right.png` shows a
+   narrower neck column; feeding the front contour straight up from the chest
+   (so the neck stops reading as a separate object) necessarily makes it wider.
+7. **LEGO studs / brick seams** are represented only as small studs on the
    feather plates and the belly panel. Modelling every 1×1 plate seam would add
    sub-millimetre noise that would not print.
-7. **Crest colours** vary per leaf in the references with no strict pattern; a
+8. **Crest colours** vary per leaf in the references with no strict pattern; a
    repeating rainbow sequence is used.
-8. **No physical scale was given**; 100 mm overall height was assumed.
+9. **No physical scale was given**; 100 mm overall height was assumed.
