@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | **pass 10 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | **pass 11 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -59,7 +59,7 @@ surfaces.
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
 | feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
 | tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
-| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | **cream, continuous snout-to-chest** |
+| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | **one sculpted underside ramp** |
 | dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
@@ -245,6 +245,42 @@ z 44-50  6.3 -> 7.5   throat / jaw
 and the front centreline is **Cream at every height from z 28 to z 50** — no
 teal band anywhere on it.
 
+**Pass 11** fixed the *geometry* of the underside, which pass 10's colour work
+had exposed rather than solved.
+
+A front-centreline profile of the finished mesh showed the underside was not a
+curve but **two near-horizontal shelves**:
+
+```
+z 30-39   y -19.9 -> -19.8   neck's front wall (vertical)
+z 42      y -24.5  nz -0.96  <-- flat shelf, 5 mm deep
+z 44      y -28.1  nz -0.25  <-- near-horizontal
+z 45      y -34.8            snout's underside
+```
+
+Two causes:
+
+1. The **throat was an ellipsoid** parked at `(0,-22.5,50.5)`. A ball's underside
+   met the neck's wall and the snout's underside at two separate angles, so it
+   read as a cream pad wedged between them. It is now a **lofted ramp** whose
+   last section is byte-identical to the snout's first section, so the two
+   volumes merge with no step at all.
+2. The **snout's two lowest sections were narrower than the neck they sat on**
+   (hx 6.2 vs 8.9 at that height), so the neck's teal sides showed as a wedge
+   between the jaw's cream and the throat's cream — the "pinched waist". Those
+   sections are now hx 7.8 and 8.3, so the jaw's underside is at least as wide
+   as the throat below it.
+
+The result is one ramp from the neck's front (y -19.8, z 39) to the snout's
+underside (y -34.8, z 45) with no shelf: the profile's steepest step is now
+4.6 mm per 1 mm of height spread smoothly over five sections, versus a 5 mm
+horizontal shelf before.
+
+A **flat-emission render** (every material replaced by an unlit copy of its base
+colour, so shading cannot hide a seam) is the test used throughout this pass:
+`output/refinement09/flat_*.png` and `fz_throat*.png`. It is what showed the
+waist in the first place, and what confirms it is gone.
+
 ## 2b. Material borders
 
 Region borders are assigned per face, so a voxel remesh quantises every colour
@@ -268,9 +304,9 @@ Base contact area  1458.9 mm^2
 ## 4. Validation results
 
 ```
-Vertices                325,510
-Edges                   677,005
-Faces                   351,479
+Vertices                326,698
+Edges                   679,220
+Faces                   352,504
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -279,18 +315,18 @@ Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
 Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
-Thickness samples       6,024
-Min thickness           0.34 mm   (claw tip, grazing ray)
-5th percentile          2.72 mm
-Median thickness        10.93 mm
+Thickness samples       6,048
+Min thickness           0.70 mm   (claw tip, grazing ray)
+5th percentile          2.67 mm
+Median thickness        10.89 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 651,052
+The exported STL was independently re-checked by parsing it directly: 653,432
 triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 976,568, 4: 5} — i.e. manifold.
+edge-use histogram of {2: 980,140, 4: 4} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -331,6 +367,9 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement09/                        underside-sculpt pass (flat-material test)
+    flat_front.png flat_34.png flat_34b.png flat_side.png flat_low.png
+    fz_throat.png fz_throat2.png fz_throat34.png fz_full34.png fz_front.png
   refinement08/                        underside-continuity pass
     front.png rear.png left_side.png right_side.png top.png
     front_3quarter.png rear_3quarter.png left_3quarter.png right_3quarter.png

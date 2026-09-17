@@ -14,7 +14,7 @@ rebuilt from **measured cross-sections** taken off the reference images, not by
 extruding or displacing those images.
 
 - **Dimensions:** 116.85 × 111.88 × 100.00 mm (W × D × H)
-- **Topology:** 325,510 verts · 351,479 faces · 1 connected component
+- **Topology:** 326,698 verts · 352,504 faces · 1 connected component
 - **Validation:** 0 non-manifold · 0 boundary · 0 loose · 0 degenerate faces
 - **Print:** flat stable base (1459 mm²), median thickness 11.0 mm, min 2.7 mm (5th pct)
 
@@ -34,7 +34,8 @@ Full model report, methodology and known deviations: [`output/README.md`](output
 | unification | join + 0.45 mm voxel remesh → single watertight shell |
 | materials | 11 colours assigned per face from a procedural region registry |
 | tail root | buried 6.5 mm inside the torso so the tail grows out of the back (pass 9) |
-| underside colour | one cream region from the lower snout through the throat, front of neck and chest (pass 10) |
+| underside colour | one cream region from the lower snout through the throat, front of neck and chest (passes 10-11) |
+| throat | lofted ramp whose last section is identical to the snout's first, so neck -> ramp -> snout has no step (pass 11) |
 
 Measurement data and proportions: [`scripts/SPEC.md`](scripts/SPEC.md)
 
@@ -47,7 +48,7 @@ scripts/
   analyze_regions.py      colour segmentation + row profiling of the references
   grid_refs.py            coordinate-grid overlays for manual measurement
   profile_compare.py      per-row silhouette delta (reference vs model)
-  build_v12.py            final procedural build (v2..v11 kept for the iteration history)
+  build_v13.py            final procedural build (v2..v12 kept for the iteration history)
   render_target_match.py  renders the model from image2's camera angle
   render_side.py          orthographic side/front diagnostics
   render_head.py          head close-ups for the face/mane pass
@@ -57,6 +58,7 @@ scripts/
   render_refine06.py      nose / limb / claw diagnostics + silhouette test
   render_refine07.py      tail-root + underside diagnostics (front/back/left/right/top)
   render_refine08.py      underside-continuity validation renders (7 angles + close-up)
+  render_refine09.py      flat-emission underside test (shading cannot hide a seam)
   render_compare.py       reference-matched orthographic renders + overlays
   make_comparison.py      builds the six comparison sheets
   render_persp.py         perspective coherence renders
@@ -76,7 +78,7 @@ output/
 Requires Blender (tested on 5.2 LTS). Run inside Blender in order:
 
 ```python
-exec(compile(open("scripts/build_v12.py").read(),    "build_v12.py", "exec"))
+exec(compile(open("scripts/build_v13.py").read(),    "build_v13.py", "exec"))
 exec(compile(open("scripts/render_compare.py").read(),"render_compare.py", "exec"))
 exec(compile(open("scripts/render_persp.py").read(),  "render_persp.py", "exec"))
 exec(compile(open("scripts/finalize_export.py").read(),"finalize_export.py", "exec"))
