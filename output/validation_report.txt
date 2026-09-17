@@ -1,10 +1,10 @@
 QUETZALOG MASCOT - MESH VALIDATION REPORT
 ==============================================
 Object:                QUETZALOG_PRINT_READY
-Vertices:              326698
-Edges:                 679220
-Faces:                 352504
-Connected components:  1  (sizes: [352504])
+Vertices:              325634
+Edges:                 677129
+Faces:                 351479
+Connected components:  1  (sizes: [351479])
 Non-manifold edges:    0
 Boundary edges:        0
 Wire edges:            0
@@ -15,10 +15,10 @@ Bounding box min:      (-58.42, -44.02, 0.00) mm
 Bounding box max:      (58.43, 67.86, 100.00) mm
 Dimensions W x D x H:  116.85 x 111.88 x 100.00 mm
 Base contact area:     1458.9 mm^2 (z < 0.6 mm)
-Thickness samples:     6048
-Min thickness:         0.70 mm
-5th percentile:        2.67 mm
-Median thickness:      10.89 mm
+Thickness samples:     6030
+Min thickness:         0.20 mm
+5th percentile:        2.68 mm
+Median thickness:      11.00 mm
 Materials:             11
 
 STATUS: PASS - watertight, manifold, no loose/degenerate geometry

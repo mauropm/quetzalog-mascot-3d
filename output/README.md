@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | **pass 11 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | pass 11 | **pass 12 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -59,7 +59,7 @@ surfaces.
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
 | feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
 | tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
-| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | **one sculpted underside ramp** |
+| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | one sculpted underside ramp | **solid, no through-hole** |
 | dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
@@ -281,6 +281,38 @@ colour, so shading cannot hide a seam) is the test used throughout this pass:
 `output/refinement09/flat_*.png` and `fz_throat*.png`. It is what showed the
 waist in the first place, and what confirms it is gone.
 
+**Pass 12** closed a genuine **through-hole** under the head.  The model is
+manifold (0 boundary edges, 0 non-manifold edges) yet it had a tunnel — a hole
+in the topology, not a missing face, which is why the mesh audit never flagged
+it.  `V - E + F` gave `-18`, i.e. **genus 10**.
+
+It was found by ray-casting, not by looking: cast a grid of rays from a camera
+through the suspect area and look for rays that **miss the model entirely** while
+all four neighbours hit.  That located the hole, and a second grid scanning
+along X mapped its exact extent:
+
+```
+       -34 -32 -30 -28 -26 -24 -22 -20 -18 ...
+z= 45    #   #   #   #   #   #   #   .   #
+z= 48    #   #   #   #   #   #   .   .   #
+z= 51    #   #   #   #   #   #   .   .   #
+```
+
+Cause: the **throat ramp stopped at z47**, but the snout's *back* (y -22.8 at
+z50) and the neck's *front* (y -19.4) leave a 3.4 mm slot between them that stays
+open all the way up to where the head closes it at z55.  The ramp now carries
+the fill up to the head (four extra sections), so the slot is closed.
+
+A second tunnel behind the neck — between the neck's back (y -2) and the crest
+base's underside (z60) — was closed with a `nape` ellipsoid.  It was hidden by
+the mane, but a hole is a hole.
+
+Genus is now 9.  The remaining 9 are small loops where feather leaves touch each
+other or the body; they are invisible from every view and predate this pass (the
+model has had them since pass 1).  Closing them would mean separating every
+feather that currently touches its neighbour, which is a much larger change than
+this pass's brief.
+
 ## 2b. Material borders
 
 Region borders are assigned per face, so a voxel remesh quantises every colour
@@ -304,9 +336,9 @@ Base contact area  1458.9 mm^2
 ## 4. Validation results
 
 ```
-Vertices                326,698
-Edges                   679,220
-Faces                   352,504
+Vertices                325,634
+Edges                   677,129
+Faces                   351,479
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -315,18 +347,18 @@ Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
 Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
-Thickness samples       6,048
-Min thickness           0.70 mm   (claw tip, grazing ray)
-5th percentile          2.67 mm
-Median thickness        10.89 mm
+Thickness samples       6,030
+Min thickness           0.20 mm   (claw tip, grazing ray)
+5th percentile          2.68 mm
+Median thickness        11.00 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 653,432
+The exported STL was independently re-checked by parsing it directly: 651,300
 triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 980,140, 4: 4} — i.e. manifold.
+edge-use histogram of {2: 976,942, 4: 4} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -367,6 +399,9 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement10/                        through-hole repair (ray-cast hunt)
+    u_sideL.png u_sideR.png u_34lowL.png u_34lowR.png
+    sl_left.png sl_right.png sl_left_tail.png
   refinement09/                        underside-sculpt pass (flat-material test)
     flat_front.png flat_34.png flat_34b.png flat_side.png flat_low.png
     fz_throat.png fz_throat2.png fz_throat34.png fz_full34.png fz_front.png
