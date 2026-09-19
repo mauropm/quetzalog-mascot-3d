@@ -44,7 +44,7 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | pass 11 | pass 12 | **pass 13 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | pass 11 | pass 12 | pass 13 | **pass 14 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
@@ -60,7 +60,7 @@ surfaces.
 | feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
 | tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
 | neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | one sculpted underside ramp | solid, no through-hole | **cream, narrower strip** |
-| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
+| dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 115 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
 design): the target is a **sphinx-sit** with the head raised on a neck, large
@@ -346,6 +346,43 @@ Nothing else moved.  Genus is still 9 (the pre-existing feather loops), so the
 cut introduced **no new hole** — the crease is a corner, not a cavity, and the
 neck stays solid underneath it.
 
+**Pass 14** was a head-proportion pass.  Measuring `views/front.png` (its alpha
+bbox is 1102 px tall, so 11.02 px/mm) against the finished render, the
+silhouette in the head band was consistently too narrow:
+
+```
+   z (mm)     reference   model (pass 13)
+    68          57 mm        44 mm
+    74          51 mm        40 mm
+    80          54 mm        40 mm
+```
+
+The whole head assembly — skull loft, snout, nose, cheeks, brow, temples, eyes,
+crest base, nape, and the throat fill that bridges it to the neck — is now built
+at its own scale and then **blown up as a group** just before the join, about a
+pivot at the head's underside.  That way every part stays consistent with every
+other part and the jaw does not move; the skull simply grows up and out.
+
+Two things had to be handled carefully:
+
+1. **Material regions.** The head's regions are authored in head space, so
+   `headreg()` wraps each predicate and maps a build-space query point back
+   through the inverse of the group scale.  Without that the eyes and jaw
+   painted in the wrong place — the first attempt had the eyes buried inside
+   the enlarged skull with only a sliver of iris showing.
+2. **How big.** 1.20 matched the reference's width almost exactly but flattened
+   the face: the group scale moves the muzzle out much further than it moves
+   the eye (the eye sits near the pivot), so at 1.20 the eyeballs stopped
+   reading as balls.  1.16 is the largest scale that keeps the face intact and
+   is what shipped.
+
+A side effect worth recording: **genus fell from 9 to 2.**  The larger skull
+merged seven of the small feather loops that had been present since pass 1.  The
+two that remain are the tail feather loops; the tunnel scan still shows the four
+head/temple points at z 51 but they are now part of the same two loops rather
+than separate ones.  Depth grows from 111.9 to 115.1 mm because the same scale
+also lengthens the muzzle by ~4 mm.
+
 ## 2b. Material borders
 
 Region borders are assigned per face, so a voxel remesh quantises every colour
@@ -369,9 +406,9 @@ Base contact area  1458.9 mm^2
 ## 4. Validation results
 
 ```
-Vertices                324,222
-Edges                   674,226
-Faces                   349,988
+Vertices                315,427
+Edges                   655,217
+Faces                   339,788
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -380,18 +417,18 @@ Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
 Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
-Thickness samples       6,002
-Min thickness           0.61 mm   (claw tip, grazing ray)
-5th percentile          2.71 mm
-Median thickness        10.91 mm
+Thickness samples       6,006
+Min thickness           0.21 mm   (claw tip, grazing ray)
+5th percentile          2.67 mm
+Median thickness        11.67 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 648,476
-triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
+The exported STL was independently re-checked by parsing it directly: 630,858
+triangles, 116.85 × 115.12 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 972,706, 4: 4} — i.e. manifold.
+edge-use histogram of {2: 946,273, 4: 7} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -432,6 +469,7 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement12/                        head-proportion pass (scale sweep 1.12/1.16/1.20)
   refinement11/                        double-chin removal (side + 3/4 + front)
     side_L.png side_R.png q34_L.png q34_R.png q34_low.png head.png
     front.png headfront.png flat_head.png flat_side.png section_x0.png

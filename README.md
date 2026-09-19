@@ -14,7 +14,7 @@ rebuilt from **measured cross-sections** taken off the reference images, not by
 extruding or displacing those images.
 
 - **Dimensions:** 116.85 × 111.88 × 100.00 mm (W × D × H)
-- **Topology:** 324,222 verts · 349,988 faces · 1 connected component
+- **Topology:** 315,427 verts · 339,788 faces · 1 connected component · genus 2
 - **Validation:** 0 non-manifold · 0 boundary · 0 loose · 0 degenerate faces
 - **Print:** flat stable base (1459 mm²), median thickness 11.0 mm, min 2.7 mm (5th pct)
 
@@ -36,6 +36,7 @@ Full model report, methodology and known deviations: [`output/README.md`](output
 | tail root | buried 6.5 mm inside the torso so the tail grows out of the back (pass 9) |
 | underside colour | one cream region from the lower snout through the throat, front of neck and chest (passes 10-11) |
 | throat | fill that stays inside the neck up to the cut, then turns forward once to meet the raised snout's underside (passes 11-13) |
+| head scale | whole head assembly built at head scale, then blown up 1.16x as a group about its underside (pass 14) |
 
 Measurement data and proportions: [`scripts/SPEC.md`](scripts/SPEC.md)
 
@@ -48,7 +49,7 @@ scripts/
   analyze_regions.py      colour segmentation + row profiling of the references
   grid_refs.py            coordinate-grid overlays for manual measurement
   profile_compare.py      per-row silhouette delta (reference vs model)
-  build_v15.py            final procedural build (v2..v14 kept for the iteration history)
+  build_v16.py            final procedural build (v2..v15 kept for the iteration history)
   render_target_match.py  renders the model from image2's camera angle
   render_side.py          orthographic side/front diagnostics
   render_head.py          head close-ups for the face/mane pass
@@ -80,7 +81,7 @@ output/
 Requires Blender (tested on 5.2 LTS). Run inside Blender in order:
 
 ```python
-exec(compile(open("scripts/build_v15.py").read(),    "build_v15.py", "exec"))
+exec(compile(open("scripts/build_v16.py").read(),    "build_v16.py", "exec"))
 exec(compile(open("scripts/render_compare.py").read(),"render_compare.py", "exec"))
 exec(compile(open("scripts/render_persp.py").read(),  "render_persp.py", "exec"))
 exec(compile(open("scripts/finalize_export.py").read(),"finalize_export.py", "exec"))
