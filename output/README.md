@@ -44,22 +44,22 @@ surfaces.
 
 ## 2. Progression across passes
 
-| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | pass 11 | **pass 12 (current)** |
+| | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | pass 6 | pass 7 | pass 8 | pass 9 | pass 10 | pass 11 | pass 12 | **pass 13 (current)** |
 |---|---|---|---|---|
 | posture | upright "teddy" sit | upright sit, refined | sphinx-sit, chest raised | sphinx-sit |
 | neck | none (head on body) | none | distinct lofted neck | neck |
-| head | oversized, low | measured | smaller, raised, longer snout | **sockets, brow, temples** |
+| head | oversized, low | measured | smaller, raised, longer snout | sockets, brow, temples |
 | eyes | sphere + sphere iris + sphere pupil + sphere highlight | same | same | **1 smooth eyeball, iris/pupil/highlight painted** |
 | crest | chaotic ball | radial petal halo | swept-back layered fan | **continuous mane rooted on the skull** |
 | wings | spiky fans | sideways fans | big back-swept folded wings | back-swept wings |
 | tail | short blob | spline + rings | longer, higher, thicker | tail |
-| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | one volume + cream jaw | +2 mm, squared nose block | **nose block, longer** |
+| snout | short | short | short | short | +3.4 mm forward | +2 mm, wider | one volume + cream jaw | +2 mm, squared nose block | nose block, longer | **underside raised 3 mm** |
 | back feathers | — | spine ladder | spine ladder | spine ladder | dorsal tile ridge | removed; wings converge | **V into tail** |
 | shoulder / hip | — | — | — | — | rounded masses | flared limb tops | rounded, leaning haunches | **unchanged** |
 | neck | tube | tube | tube | tube | tube | chest-fed loft | **chest-fed loft** |
 | feet / claws | 3 spheres + painted rings | 3 spheres | 3 spheres | 3 spheres | 3 spheres | 3 spheres | broad slab + 4 cone claws | **unchanged** |
 | tail root | tube end cap | tube | tube | tube | tube | tube | tube | **root buried in torso** |
-| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | one sculpted underside ramp | **solid, no through-hole** |
+| neck front colour | teal | teal | teal | teal | teal | teal | teal | cream | cream | one sculpted underside ramp | solid, no through-hole | **cream, narrower strip** |
 | dims (W×D×H) | 134 × 95 × 100 | 120 × 104 × 100 | 116 × 108 × 100 | 114 × 103 × 100 | 114 × 106 × 100 | 114 × 108 × 100 | 117 × 109 × 100 | 117 × 111 × 100 | **117 × 112 × 100** |
 
 **Pass 3** was driven by `image1.png` (previous model) vs `image2.png` (target
@@ -313,6 +313,39 @@ model has had them since pass 1).  Closing them would mean separating every
 feather that currently touches its neighbour, which is a much larger change than
 this pass's brief.
 
+**Pass 13** removed the **double chin**.  Measured off `views/left.png` (11.1
+px/mm, feet at y_px 1130) the reference puts the jaw's underside at **z ≈ 50 mm**
+and the shoulder at ≈ 39, i.e. a visible neck of **~13 mm**.  The model put the
+jaw at **z = 44.5** with the torso topping out at 41 — a visible neck of
+**3.5 mm**.  The muzzle therefore had almost no neck under it and merged
+straight into the chest in one long convex sweep.  That sweep was the chin.
+
+Two changes, both to existing lofts:
+
+1. **The snout's underside was raised 3 mm** (lowest section `z 47 → 50` in build
+   coords).  Its width, its top edge and its front are untouched, so the muzzle
+   keeps its shape; only the downward projection goes.  The head's height drops
+   from 33 mm to 30 mm, which is what the reference measures (27–30 mm).
+2. **The throat fill no longer ramps forward below the jaw.**  It used to start
+   leaving the neck's front at z 36 and reach y −34 by z 44, so the surface left
+   the neck early and swept forward in one long curve.  It now stays *inside* the
+   neck's own front wall (y −20.0 … −20.7) up to z 47 and turns forward **once**,
+   over ~1.5 mm, at the cut.  The neck's front is vertical and the ramp leaves it
+   abruptly, so the two meet in a **corner** — the jaw's underside overhangs the
+   neck, and voxel remesh rounds that corner to about 1 mm: a soft-edged
+   stylised cut rather than a knife edge.
+
+The cream region was re-tuned to follow the new shape and the neck's strip was
+narrowed (capsule radius 5.4 → 4.6) to match the reference's narrow throat band.
+The serrated cream/teal border that pass 12 inherited was also fixed: the
+defining ellipsoid was too large in Z, so its surface crossed the jaw's side at
+a grazing angle and quantised into a sawtooth.  Making it flatter in Z makes the
+border cross the surface at close to 90°, which cleans it up.
+
+Nothing else moved.  Genus is still 9 (the pre-existing feather loops), so the
+cut introduced **no new hole** — the crease is a corner, not a cavity, and the
+neck stays solid underneath it.
+
 ## 2b. Material borders
 
 Region borders are assigned per face, so a voxel remesh quantises every colour
@@ -336,9 +369,9 @@ Base contact area  1458.9 mm^2
 ## 4. Validation results
 
 ```
-Vertices                325,634
-Edges                   677,129
-Faces                   351,479
+Vertices                324,222
+Edges                   674,226
+Faces                   349,988
 Connected components    1
 Non-manifold edges      0
 Boundary edges          0
@@ -347,18 +380,18 @@ Loose vertices          0
 Degenerate faces        0
 Invalid / inverted normals  0
 Bounding box            (-58.42, -44.02, 0.00) -> (58.43, 67.86, 100.00) mm
-Thickness samples       6,030
-Min thickness           0.20 mm   (claw tip, grazing ray)
-5th percentile          2.68 mm
-Median thickness        11.00 mm
+Thickness samples       6,002
+Min thickness           0.61 mm   (claw tip, grazing ray)
+5th percentile          2.71 mm
+Median thickness        10.91 mm
 Materials               11
 STATUS                  PASS — watertight, manifold, single shell
 ```
 
-The exported STL was independently re-checked by parsing it directly: 651,300
+The exported STL was independently re-checked by parsing it directly: 648,476
 triangles, 116.85 × 111.88 × 100.00 mm. The 3MF is a valid OPC package with 11
 basematerials and `unit="millimeter"`; its full-precision coordinates give an
-edge-use histogram of {2: 976,942, 4: 4} — i.e. manifold.
+edge-use histogram of {2: 972,706, 4: 4} — i.e. manifold.
 
 ## 5. Print recommendations
 
@@ -399,6 +432,9 @@ output/
   refinement05/                        back + snout diagnostics
     back.png top.png rear34.png front.png
     snout_side.png snout_34.png
+  refinement11/                        double-chin removal (side + 3/4 + front)
+    side_L.png side_R.png q34_L.png q34_R.png q34_low.png head.png
+    front.png headfront.png flat_head.png flat_side.png section_x0.png
   refinement10/                        through-hole repair (ray-cast hunt)
     u_sideL.png u_sideR.png u_34lowL.png u_34lowR.png
     sl_left.png sl_right.png sl_left_tail.png
